@@ -44,6 +44,8 @@ app.post("/api/contact", async (req, res) => {
 
     res.status(200).json({ success: true });
   } catch (err) {
+    console.error("EMAIL ERROR:", err);
+
     res.status(500).json({ success: false });
   }
 });
