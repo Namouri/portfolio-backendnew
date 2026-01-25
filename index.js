@@ -9,16 +9,15 @@ console.log("VERIFIED SENDER:", process.env.SENDGRID_VERIFIED_SENDER);
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
-
+/*
 const allowedOrigins = [
   "http://localhost:5173",
   "https://portfolio-frontendnew.vercel.app",
   "https://www.nouramouri.com",
-];
+];*/
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like Postman)
+app.use(cors(
+ /* origin: function (origin, callback) {
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
@@ -27,8 +26,8 @@ app.use(cors({
       callback(new Error("CORS not allowed"));
     }
   },
-  methods: ["POST"],
-}));
+  methods: ["POST"],*/
+));
 
 /*app.use(cors({
   origin: [
