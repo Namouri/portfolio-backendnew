@@ -13,6 +13,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "https://portfolio-frontendnew.vercel.app",
+  "https://www.nouramouri.com",
 ];
 
 app.use(cors({
