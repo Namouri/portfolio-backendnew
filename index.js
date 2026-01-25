@@ -1,45 +1,67 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
+console.log("SENDGRID_API_KEY:", process.env.SENDGRID_API_KEY);
+console.log("VERIFIED SENDER:", process.env.SENDGRID_VERIFIED_SENDER);
 
-
-dotenv.config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://portfolio-frontendnew.vercel.app",
+];
+
 app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  },
+  methods: ["POST"],
+}));
+
+/*app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://portfolio-frontendnew.vercel.app"
   ],
   methods: ['GET', 'POST'],
   credentials: true
-}));
+}));*/
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Backend running");
+  res.send("Backend running now");
 });
 
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   try {
-    const transporter = nodemailer.createTransport({
+  /*  const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-    });
+    });*/
 
-    await transporter.sendMail({
-      from: `"${name}" <${email}>`,
-      to: process.env.EMAIL_USER,
+    await sgMail.send({
+      to: process.env.SENDGRID_VERIFIED_SENDER,
+      from: process.env.SENDGRID_VERIFIED_SENDER, // Must be verified in SendGrid
       subject: `Portfolio message from ${name}`,
-      text: message,
+      text: `From: ${name} (${email})\n\n${message}`,
+      replyTo: email,
     });
 
     res.status(200).json({ success: true });
